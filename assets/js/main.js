@@ -145,8 +145,10 @@
   const fTrack = $('.featured__track');
   const fBar = $('.featured__progress i');
   let fDist = 0;
+  // Pinned horizontal scroll only on large screens; touch devices get a native swipe carousel
+  const pinMQ = matchMedia('(min-width: 1025px) and (hover: hover)');
   const setupFeatured = () => {
-    const pin = !reduced;
+    const pin = pinMQ.matches && !reduced;
     featured.classList.toggle('is-pinned', pin);
     if (!pin) {
       featured.style.height = '';
@@ -170,7 +172,7 @@
   fTrack.addEventListener('scroll', updateFeatured, { passive: true });
   $$('img', fTrack).forEach((img) => img.complete || img.addEventListener('load', () => { setupFeatured(); updateFeatured(); }, { once: true }));
   // Load featured images early so the scroll distance is correct
-  if (!reduced) $$('img', fTrack).forEach((img) => { img.loading = 'eager'; });
+  if (pinMQ.matches && !reduced) $$('img', fTrack).forEach((img) => { img.loading = 'eager'; });
 
   /* ---------- Marquee ---------- */
   const mTrack = $('.marquee__track');

@@ -278,8 +278,8 @@ p { margin: 0 0 1em; }
 /* JS-enhanced pinned version (desktop) */
 .featured.is-pinned .featured__sticky { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: var(--header-h) 0 32px; }
 .featured.is-pinned .featured__head { margin-bottom: 4vh; width: 100%; }
-.featured.is-pinned .feat { width: auto; height: 50vh; }
-.featured.is-pinned .feat__img { height: 100%; width: auto; aspect-ratio: 3 / 4; }
+.featured.is-pinned .feat { width: calc(50vh * .75); height: 50vh; }
+.featured.is-pinned .feat__img { height: 100%; width: 100%; aspect-ratio: auto; }
 .featured.is-pinned .feat:nth-child(even) { margin-top: 5vh; }
 .featured.is-pinned .featured__progress { margin-top: 4vh; }
 .featured:not(.is-pinned) .featured__track { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 8px; }
@@ -557,9 +557,15 @@ p { margin: 0 0 1em; }
   .stile__desc { grid-column: 2 / 4; grid-row: 2; font-size: 15px; }
   .stile__arrow { grid-column: 3; grid-row: 1; }
   .stile__float { display: none; }
-  .featured.is-pinned .feat { height: 46svh; }
-  .featured.is-pinned .feat figcaption { font-size: 12px; }
-  .featured.is-pinned .feat figcaption span { font-size: 22px; }
+  .featured__sticky { padding-bottom: 0; }
+  .featured__head { margin-bottom: 32px; }
+  .featured__track { gap: 12px; }
+  .featured:not(.is-pinned) .feat { width: min(78vw, 360px); }
+  .featured:not(.is-pinned) .feat:nth-child(even) { margin-top: 0; }
+  .featured:not(.is-pinned) .featured__end { width: min(60vw, 240px); margin-right: var(--gutter); }
+  .feat figcaption { font-size: 13px; }
+  .feat figcaption span { font-size: 24px; }
+  .featured__progress { margin-top: 24px; }
   .about__grid, .faq__grid, .booking__grid, .prices__grid { grid-template-columns: 1fr; }
   .about__media, .faq__grid > div:first-child { position: relative; top: 0; }
   .about__media { max-width: 560px; }
