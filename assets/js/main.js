@@ -145,9 +145,8 @@
   const fTrack = $('.featured__track');
   const fBar = $('.featured__progress i');
   let fDist = 0;
-  const pinMQ = matchMedia('(min-width: 1025px)');
   const setupFeatured = () => {
-    const pin = pinMQ.matches && !reduced;
+    const pin = !reduced;
     featured.classList.toggle('is-pinned', pin);
     if (!pin) {
       featured.style.height = '';
@@ -170,8 +169,8 @@
   };
   fTrack.addEventListener('scroll', updateFeatured, { passive: true });
   $$('img', fTrack).forEach((img) => img.complete || img.addEventListener('load', () => { setupFeatured(); updateFeatured(); }, { once: true }));
-  // Load featured images early on desktop so widths are correct
-  if (pinMQ.matches) $$('img', fTrack).forEach((img) => { img.loading = 'eager'; });
+  // Load featured images early so the scroll distance is correct
+  if (!reduced) $$('img', fTrack).forEach((img) => { img.loading = 'eager'; });
 
   /* ---------- Marquee ---------- */
   const mTrack = $('.marquee__track');
@@ -223,11 +222,26 @@
     };
     requestAnimationFrame(move);
     document.addEventListener('mouseover', (e) => {
-      const view = e.target.closest('.tile__btn, .feat');
+      const view = e.target.closest('.tile__btn, .feat__img');
       const link = !view && e.target.closest('a, button, summary, label, input, textarea');
       cursor.classList.toggle('is-view', !!view);
       cursor.classList.toggle('is-link', !!link);
     });
+  }
+
+  /* ---------- Touch: colour + images for whatever is centred on screen ---------- */
+  if (!finePointer) {
+    $$('.stile__item').forEach((item) => {
+      const thumb = document.createElement('span');
+      thumb.className = 'stile__thumb';
+      thumb.setAttribute('aria-hidden', 'true');
+      thumb.innerHTML = `<img src="${item.dataset.img}" alt="" loading="lazy">`;
+      $('a', item).appendChild(thumb);
+    });
+    const litIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => e.target.classList.toggle('is-lit', e.isIntersecting));
+    }, { rootMargin: '-38% -15% -38% -15%' });
+    $$('.tile__btn, .feat__img, .stile__item').forEach((el) => litIO.observe(el));
   }
 
   /* ---------- Stile: floating image ---------- */
@@ -321,7 +335,9 @@
     lbImg.style.animation = 'none'; void lbImg.offsetWidth; lbImg.style.animation = '';
   };
   const lbOpen = (btn) => {
-    lbList = $$('.tile:not(.is-hidden):not(.is-collapsed) .tile__btn');
+    lbList = btn.matches('.feat__img')
+      ? $$('.feat__img')
+      : $$('.tile:not(.is-hidden):not(.is-collapsed) .tile__btn');
     lastFocus = btn;
     lbShow(lbList.indexOf(btn));
     lb.showModal();
@@ -329,7 +345,7 @@
   };
   const lbClose = () => { lb.close(); };
   lb.addEventListener('close', () => { document.body.classList.remove('is-locked'); lastFocus && lastFocus.focus(); });
-  $$('.tile__btn').forEach((b) => b.addEventListener('click', () => lbOpen(b)));
+  $$('.tile__btn, .feat__img').forEach((b) => b.addEventListener('click', () => lbOpen(b)));
   $('.lightbox__close').addEventListener('click', lbClose);
   $('.lightbox__prev').addEventListener('click', () => lbShow(lbIndex - 1));
   $('.lightbox__next').addEventListener('click', () => lbShow(lbIndex + 1));
